@@ -94,11 +94,15 @@ https://random-words.trycloudflare.com/api/v1/otlp/v1/metrics
 3. Enter a name, for example `Local Prometheus - Endpoint Connection`.
 4. Set **Target** to **HTTP**.
 5. Set **Endpoint URL** to the full public URL from the previous section, including `/api/v1/otlp/v1/metrics`.
-6. Leave authentication disabled for this demo.
+6. Select **Custom** under **Auth Type** and leave **Custom Headers** empty for this demo.
 7. Set **OpenTelemetry Signal** to **Metric**.
 8. Set **Data Model Version** to **v2**. Dynamic and Local Network Endpoint metrics require v2.
 9. In the Endpoint Experience selection, choose one or more Endpoint Agent labels. These labels determine which agents contribute Local Network data.
 10. Save the integration.
+
+![Create a ThousandEyes OpenTelemetry metrics stream](docs/images/create-thousandeyes-stream.png)
+
+The screenshot shows the stream-creation form. Ensure the Endpoint URL includes the full `/api/v1/otlp/v1/metrics` path as described above.
 
 The integration sends all supported Endpoint Local Network categories for the selected agents. Prometheus and the supplied dashboard focus on the `Connection` metric names.
 
