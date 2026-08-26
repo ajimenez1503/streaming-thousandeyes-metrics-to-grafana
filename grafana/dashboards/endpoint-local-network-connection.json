@@ -1,0 +1,451 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "description": "ThousandEyes Endpoint Experience Local Network Connection metrics received through Prometheus OTLP/HTTP.",
+  "editable": true,
+  "graphTooltip": 1,
+  "links": [
+    {
+      "targetBlank": true,
+      "title": "ThousandEyes data model v2",
+      "type": "link",
+      "url": "https://docs.thousandeyes.com/product-documentation/integration-guides/opentelemetry/data-model/data-model-v2/metrics#endpoint-experience-local-network"
+    }
+  ],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false
+          },
+          "max": 100,
+          "min": 0,
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": ["lastNotNull", "min", "max"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_signal_quality(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_wifi_ssid=~\"$ssid\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} {{network_wifi_ssid}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Signal quality",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": ["lastNotNull", "max"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_connection_(throughput|link_speed)(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_wifi_ssid=~\"$ssid\"}",
+          "legendFormat": "{{__name__}} {{thousandeyes_source_agent_name}} {{network_io_direction}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Throughput and link speed",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false
+          },
+          "unit": "dBm"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*(rsrq|sinr).*/"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dB"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": ["lastNotNull", "min", "max"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_signal_(rssi|rsrp|rsrq|sinr|rscp)(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_wifi_ssid=~\"$ssid\"}",
+          "legendFormat": "{{__name__}} {{thousandeyes_source_agent_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Wireless and cellular signal",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_connection_score(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_wifi_ssid=~\"$ssid\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} {{network_connection_type}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Connection score",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false
+          },
+          "max": 100,
+          "min": 0,
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": ["lastNotNull", "max"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_wifi_retransmission_rate(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_wifi_ssid=~\"$ssid\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} {{network_wifi_ssid}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Wi-Fi retransmission rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 35,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          },
+          "min": 0,
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": ["lastNotNull", "sum"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_wifi_(roaming_events|channel_changes)_count(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_wifi_ssid=~\"$ssid\"}",
+          "legendFormat": "{{__name__}} {{thousandeyes_source_agent_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Wi-Fi roaming and channel changes",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 41,
+  "tags": ["ThousandEyes", "OpenTelemetry", "Endpoint Experience"],
+  "templating": {
+    "list": [
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\"}, thousandeyes_source_agent_name)",
+        "includeAll": true,
+        "label": "Agent",
+        "multi": true,
+        "name": "agent",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\"}, thousandeyes_source_agent_name)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\"}, network_connection_type)",
+        "includeAll": true,
+        "label": "Connection type",
+        "multi": true,
+        "name": "connection_type",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\"}, network_connection_type)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_ssid)",
+        "includeAll": true,
+        "label": "SSID",
+        "multi": true,
+        "name": "ssid",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_ssid)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Endpoint Local Network - Connection",
+  "uid": "te-endpoint-connection",
+  "version": 1
+}
