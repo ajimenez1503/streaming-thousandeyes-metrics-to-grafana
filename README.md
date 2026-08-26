@@ -56,6 +56,10 @@ The dashboard provides one panel for each metric and exposes filters for `thousa
 
 Keep a filter set to **All** when the attribute does not apply to the selected connection type. For example, Wi-Fi attributes are not expected on cellular connections.
 
+![Grafana Endpoint Local Network Connection dashboard](docs/images/endpoint-local-network-connection-dashboard.png)
+
+The dashboard shows the Connection metric panels with the Country, Location, Agent, connection, Wi-Fi, cellular, and driver filters.
+
 ## 1. Prerequisites
 
 - Docker Engine or Docker Desktop with Docker Compose
