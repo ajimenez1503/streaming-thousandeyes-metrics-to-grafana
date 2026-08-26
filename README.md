@@ -40,7 +40,21 @@ The dashboard focuses on the ThousandEyes [Endpoint Experience Local Network `Co
 | `network.signal.sinr` | Signal-to-Interference-plus-Noise Ratio | dB |
 | `network.signal.rscp` | Received Signal Code Power | dBm |
 
-The `Connection` metrics also carry connection details such as interface, SSID, BSSID, Wi-Fi channel, PHY mode, access-point vendor, cellular generation, carrier, and driver information. The common resource attributes identify the stream, account, Endpoint Agent, location, public and local network, connection type, ASN, data-model version, and permalink.
+The dashboard provides one panel for each metric and exposes filters for `thousandeyes.source.agent.location`, `thousandeyes.source.agent.geo.country.iso_code`, `network.connection.type`, and every Connection-specific attribute:
+
+- `network.connection.subtype`
+- `network.interface.name`
+- `network.carrier.name`
+- `network.wifi.ssid`
+- `network.wifi.bssid`
+- `network.wifi.channel`
+- `network.wifi.phy_mode`
+- `network.wifi.access_point.vendor`
+- `network.cellular.generation`
+- `network.interface.driver.model`
+- `network.interface.driver.version`
+
+Keep a filter set to **All** when the attribute does not apply to the selected connection type. For example, Wi-Fi attributes are not expected on cellular connections.
 
 ## 1. Prerequisites
 
@@ -175,7 +189,7 @@ count by (__name__) (
 
 The default Prometheus OTLP translation replaces dots with underscores and may append type or unit suffixes. For example, `network.signal.quality` begins with `network_signal_quality` after translation. The dashboard deliberately matches the translated prefixes so it remains valid when a suffix is present.
 
-In Grafana, open **Dashboards > ThousandEyes > Endpoint Local Network - Connection**. Use the Agent, Connection type, and SSID variables to narrow the view.
+In Grafana, open **Dashboards > ThousandEyes > Endpoint Local Network - Connection**. Use the Country, Location, Agent, connection, Wi-Fi, cellular, and driver variables to narrow the view. The dashboard has a separate panel for each of the 12 Connection metrics listed above.
 
 Resource attributes are available as labels because [prometheus/prometheus.yml](prometheus/prometheus.yml) contains:
 

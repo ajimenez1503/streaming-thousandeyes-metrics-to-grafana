@@ -2,7 +2,7 @@
   "annotations": {
     "list": []
   },
-  "description": "ThousandEyes Endpoint Experience Local Network Connection metrics received through Prometheus OTLP/HTTP.",
+  "description": "ThousandEyes Endpoint Experience Local Network Connection metrics received through Prometheus OTLP/HTTP. The dashboard provides one panel per Connection metric and filters for agent geography and all Connection-specific attributes.",
   "editable": true,
   "graphTooltip": 1,
   "links": [
@@ -19,6 +19,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
+      "description": "OpenTelemetry metric `network.signal.quality`. Use the dashboard variables to filter by agent geography and Connection attributes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -26,14 +27,14 @@
           },
           "custom": {
             "drawStyle": "line",
-            "fillOpacity": 12,
+            "fillOpacity": 10,
             "lineWidth": 2,
             "showPoints": "auto",
             "spanNulls": false
           },
-          "max": 100,
+          "unit": "percent",
           "min": 0,
-          "unit": "percent"
+          "max": 100
         },
         "overrides": []
       },
@@ -46,7 +47,11 @@
       "id": 1,
       "options": {
         "legend": {
-          "calcs": ["lastNotNull", "min", "max"],
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -59,8 +64,8 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "{__name__=~\"network_signal_quality(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_wifi_ssid=~\"$ssid\"}",
-          "legendFormat": "{{thousandeyes_source_agent_name}} {{network_wifi_ssid}}",
+          "expr": "{__name__=~\"network_signal_quality(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_connection_subtype=~\"$connection_subtype\",network_interface_name=~\"$interface_name\",network_carrier_name=~\"$carrier\",network_wifi_ssid=~\"$ssid\",network_wifi_bssid=~\"$bssid\",network_wifi_channel=~\"$wifi_channel\",network_wifi_phy_mode=~\"$phy_mode\",network_wifi_access_point_vendor=~\"$ap_vendor\",network_cellular_generation=~\"$cellular_generation\",network_interface_driver_model=~\"$driver_model\",network_interface_driver_version=~\"$driver_version\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} | {{thousandeyes_source_agent_location}} | {{network_interface_name}}",
           "range": true,
           "refId": "A"
         }
@@ -73,6 +78,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
+      "description": "OpenTelemetry metric `network.connection.throughput`. Use the dashboard variables to filter by agent geography and Connection attributes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -98,7 +104,11 @@
       "id": 2,
       "options": {
         "legend": {
-          "calcs": ["lastNotNull", "max"],
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -111,13 +121,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "{__name__=~\"network_connection_(throughput|link_speed)(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_wifi_ssid=~\"$ssid\"}",
-          "legendFormat": "{{__name__}} {{thousandeyes_source_agent_name}} {{network_io_direction}}",
+          "expr": "{__name__=~\"network_connection_throughput(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_connection_subtype=~\"$connection_subtype\",network_interface_name=~\"$interface_name\",network_carrier_name=~\"$carrier\",network_wifi_ssid=~\"$ssid\",network_wifi_bssid=~\"$bssid\",network_wifi_channel=~\"$wifi_channel\",network_wifi_phy_mode=~\"$phy_mode\",network_wifi_access_point_vendor=~\"$ap_vendor\",network_cellular_generation=~\"$cellular_generation\",network_interface_driver_model=~\"$driver_model\",network_interface_driver_version=~\"$driver_version\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} | {{network_io_direction}} | {{network_interface_name}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Throughput and link speed",
+      "title": "Connection throughput",
       "type": "timeseries"
     },
     {
@@ -125,6 +135,296 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
+      "description": "OpenTelemetry metric `network.connection.link_speed`. Use the dashboard variables to filter by agent geography and Connection attributes.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_connection_link_speed(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_connection_subtype=~\"$connection_subtype\",network_interface_name=~\"$interface_name\",network_carrier_name=~\"$carrier\",network_wifi_ssid=~\"$ssid\",network_wifi_bssid=~\"$bssid\",network_wifi_channel=~\"$wifi_channel\",network_wifi_phy_mode=~\"$phy_mode\",network_wifi_access_point_vendor=~\"$ap_vendor\",network_cellular_generation=~\"$cellular_generation\",network_interface_driver_model=~\"$driver_model\",network_interface_driver_version=~\"$driver_version\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} | {{network_interface_name}} | {{network_connection_subtype}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Connection link speed",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "OpenTelemetry metric `network.wifi.retransmission.rate`. Use the dashboard variables to filter by agent geography and Connection attributes.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false
+          },
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_wifi_retransmission_rate(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_connection_subtype=~\"$connection_subtype\",network_interface_name=~\"$interface_name\",network_carrier_name=~\"$carrier\",network_wifi_ssid=~\"$ssid\",network_wifi_bssid=~\"$bssid\",network_wifi_channel=~\"$wifi_channel\",network_wifi_phy_mode=~\"$phy_mode\",network_wifi_access_point_vendor=~\"$ap_vendor\",network_cellular_generation=~\"$cellular_generation\",network_interface_driver_model=~\"$driver_model\",network_interface_driver_version=~\"$driver_version\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} | {{network_wifi_ssid}} | {{network_wifi_bssid}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Wi-Fi retransmission rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "OpenTelemetry metric `network.wifi.roaming.events.count`. Use the dashboard variables to filter by agent geography and Connection attributes.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 35,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          },
+          "unit": "short",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_wifi_roaming_events_count(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_connection_subtype=~\"$connection_subtype\",network_interface_name=~\"$interface_name\",network_carrier_name=~\"$carrier\",network_wifi_ssid=~\"$ssid\",network_wifi_bssid=~\"$bssid\",network_wifi_channel=~\"$wifi_channel\",network_wifi_phy_mode=~\"$phy_mode\",network_wifi_access_point_vendor=~\"$ap_vendor\",network_cellular_generation=~\"$cellular_generation\",network_interface_driver_model=~\"$driver_model\",network_interface_driver_version=~\"$driver_version\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} | {{network_wifi_ssid}} | {{network_wifi_bssid}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Wi-Fi roaming events",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "OpenTelemetry metric `network.wifi.channel.changes.count`. Use the dashboard variables to filter by agent geography and Connection attributes.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 35,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          },
+          "unit": "short",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_wifi_channel_changes_count(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_connection_subtype=~\"$connection_subtype\",network_interface_name=~\"$interface_name\",network_carrier_name=~\"$carrier\",network_wifi_ssid=~\"$ssid\",network_wifi_bssid=~\"$bssid\",network_wifi_channel=~\"$wifi_channel\",network_wifi_phy_mode=~\"$phy_mode\",network_wifi_access_point_vendor=~\"$ap_vendor\",network_cellular_generation=~\"$cellular_generation\",network_interface_driver_model=~\"$driver_model\",network_interface_driver_version=~\"$driver_version\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} | {{network_wifi_ssid}} | channel {{network_wifi_channel}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Wi-Fi channel changes",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "OpenTelemetry metric `network.connection.score`. Use the dashboard variables to filter by agent geography and Connection attributes.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false
+          },
+          "unit": "none",
+          "min": 0,
+          "max": 100
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_connection_score(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_connection_subtype=~\"$connection_subtype\",network_interface_name=~\"$interface_name\",network_carrier_name=~\"$carrier\",network_wifi_ssid=~\"$ssid\",network_wifi_bssid=~\"$bssid\",network_wifi_channel=~\"$wifi_channel\",network_wifi_phy_mode=~\"$phy_mode\",network_wifi_access_point_vendor=~\"$ap_vendor\",network_cellular_generation=~\"$cellular_generation\",network_interface_driver_model=~\"$driver_model\",network_interface_driver_version=~\"$driver_version\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} | {{network_connection_type}} | {{network_connection_subtype}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Connection score",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "OpenTelemetry metric `network.signal.rssi`. Use the dashboard variables to filter by agent geography and Connection attributes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -139,31 +439,22 @@
           },
           "unit": "dBm"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*(rsrq|sinr).*/"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "dB"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 8
+        "x": 12,
+        "y": 24
       },
-      "id": 3,
+      "id": 8,
       "options": {
         "legend": {
-          "calcs": ["lastNotNull", "min", "max"],
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -176,13 +467,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "{__name__=~\"network_signal_(rssi|rsrp|rsrq|sinr|rscp)(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_wifi_ssid=~\"$ssid\"}",
-          "legendFormat": "{{__name__}} {{thousandeyes_source_agent_name}}",
+          "expr": "{__name__=~\"network_signal_rssi(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_connection_subtype=~\"$connection_subtype\",network_interface_name=~\"$interface_name\",network_carrier_name=~\"$carrier\",network_wifi_ssid=~\"$ssid\",network_wifi_bssid=~\"$bssid\",network_wifi_channel=~\"$wifi_channel\",network_wifi_phy_mode=~\"$phy_mode\",network_wifi_access_point_vendor=~\"$ap_vendor\",network_cellular_generation=~\"$cellular_generation\",network_interface_driver_model=~\"$driver_model\",network_interface_driver_version=~\"$driver_version\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} | {{network_wifi_ssid}} | {{network_wifi_bssid}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Wireless and cellular signal",
+      "title": "Signal RSSI",
       "type": "timeseries"
     },
     {
@@ -190,70 +481,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 50
-              },
-              {
-                "color": "green",
-                "value": 75
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 8
-      },
-      "id": 4,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": ["lastNotNull"],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "targets": [
-        {
-          "editorMode": "code",
-          "expr": "{__name__=~\"network_connection_score(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_wifi_ssid=~\"$ssid\"}",
-          "legendFormat": "{{thousandeyes_source_agent_name}} {{network_connection_type}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Connection score",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
+      "description": "OpenTelemetry metric `network.signal.rsrp`. Use the dashboard variables to filter by agent geography and Connection attributes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -266,9 +494,7 @@
             "showPoints": "auto",
             "spanNulls": false
           },
-          "max": 100,
-          "min": 0,
-          "unit": "percent"
+          "unit": "dBm"
         },
         "overrides": []
       },
@@ -276,12 +502,16 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 32
       },
-      "id": 5,
+      "id": 9,
       "options": {
         "legend": {
-          "calcs": ["lastNotNull", "max"],
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -294,13 +524,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "{__name__=~\"network_wifi_retransmission_rate(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_wifi_ssid=~\"$ssid\"}",
-          "legendFormat": "{{thousandeyes_source_agent_name}} {{network_wifi_ssid}}",
+          "expr": "{__name__=~\"network_signal_rsrp(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_connection_subtype=~\"$connection_subtype\",network_interface_name=~\"$interface_name\",network_carrier_name=~\"$carrier\",network_wifi_ssid=~\"$ssid\",network_wifi_bssid=~\"$bssid\",network_wifi_channel=~\"$wifi_channel\",network_wifi_phy_mode=~\"$phy_mode\",network_wifi_access_point_vendor=~\"$ap_vendor\",network_cellular_generation=~\"$cellular_generation\",network_interface_driver_model=~\"$driver_model\",network_interface_driver_version=~\"$driver_version\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} | {{network_carrier_name}} | {{network_cellular_generation}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Wi-Fi retransmission rate",
+      "title": "Signal RSRP",
       "type": "timeseries"
     },
     {
@@ -308,20 +538,20 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
+      "description": "OpenTelemetry metric `network.signal.rsrq`. Use the dashboard variables to filter by agent geography and Connection attributes.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
-            "drawStyle": "bars",
-            "fillOpacity": 35,
-            "lineWidth": 1,
-            "showPoints": "never",
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "auto",
             "spanNulls": false
           },
-          "min": 0,
-          "unit": "short"
+          "unit": "dB"
         },
         "overrides": []
       },
@@ -329,12 +559,16 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 32
       },
-      "id": 6,
+      "id": 10,
       "options": {
         "legend": {
-          "calcs": ["lastNotNull", "sum"],
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -347,19 +581,138 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "{__name__=~\"network_wifi_(roaming_events|channel_changes)_count(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_wifi_ssid=~\"$ssid\"}",
-          "legendFormat": "{{__name__}} {{thousandeyes_source_agent_name}}",
+          "expr": "{__name__=~\"network_signal_rsrq(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_connection_subtype=~\"$connection_subtype\",network_interface_name=~\"$interface_name\",network_carrier_name=~\"$carrier\",network_wifi_ssid=~\"$ssid\",network_wifi_bssid=~\"$bssid\",network_wifi_channel=~\"$wifi_channel\",network_wifi_phy_mode=~\"$phy_mode\",network_wifi_access_point_vendor=~\"$ap_vendor\",network_cellular_generation=~\"$cellular_generation\",network_interface_driver_model=~\"$driver_model\",network_interface_driver_version=~\"$driver_version\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} | {{network_carrier_name}} | {{network_cellular_generation}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Wi-Fi roaming and channel changes",
+      "title": "Signal RSRQ",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "OpenTelemetry metric `network.signal.sinr`. Use the dashboard variables to filter by agent geography and Connection attributes.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false
+          },
+          "unit": "dB"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 40
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_signal_sinr(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_connection_subtype=~\"$connection_subtype\",network_interface_name=~\"$interface_name\",network_carrier_name=~\"$carrier\",network_wifi_ssid=~\"$ssid\",network_wifi_bssid=~\"$bssid\",network_wifi_channel=~\"$wifi_channel\",network_wifi_phy_mode=~\"$phy_mode\",network_wifi_access_point_vendor=~\"$ap_vendor\",network_cellular_generation=~\"$cellular_generation\",network_interface_driver_model=~\"$driver_model\",network_interface_driver_version=~\"$driver_version\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} | {{network_carrier_name}} | {{network_cellular_generation}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Signal SINR",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "OpenTelemetry metric `network.signal.rscp`. Use the dashboard variables to filter by agent geography and Connection attributes.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false
+          },
+          "unit": "dBm"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 40
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "{__name__=~\"network_signal_rscp(_.*)?\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\",network_connection_subtype=~\"$connection_subtype\",network_interface_name=~\"$interface_name\",network_carrier_name=~\"$carrier\",network_wifi_ssid=~\"$ssid\",network_wifi_bssid=~\"$bssid\",network_wifi_channel=~\"$wifi_channel\",network_wifi_phy_mode=~\"$phy_mode\",network_wifi_access_point_vendor=~\"$ap_vendor\",network_cellular_generation=~\"$cellular_generation\",network_interface_driver_model=~\"$driver_model\",network_interface_driver_version=~\"$driver_version\"}",
+          "legendFormat": "{{thousandeyes_source_agent_name}} | {{network_carrier_name}} | {{network_cellular_generation}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Signal RSCP",
       "type": "timeseries"
     }
   ],
   "refresh": "1m",
   "schemaVersion": 41,
-  "tags": ["ThousandEyes", "OpenTelemetry", "Endpoint Experience"],
+  "tags": [
+    "ThousandEyes",
+    "OpenTelemetry",
+    "Endpoint Experience",
+    "Connection"
+  ],
   "templating": {
     "list": [
       {
@@ -372,14 +725,64 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
-        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\"}, thousandeyes_source_agent_name)",
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\"}, thousandeyes_source_agent_geo_country_iso_code)",
+        "includeAll": true,
+        "label": "Country",
+        "multi": true,
+        "name": "country",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\"}, thousandeyes_source_agent_geo_country_iso_code)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\"}, thousandeyes_source_agent_location)",
+        "includeAll": true,
+        "label": "Location",
+        "multi": true,
+        "name": "location",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\"}, thousandeyes_source_agent_location)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\"}, thousandeyes_source_agent_name)",
         "includeAll": true,
         "label": "Agent",
         "multi": true,
         "name": "agent",
         "options": [],
         "query": {
-          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\"}, thousandeyes_source_agent_name)",
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\"}, thousandeyes_source_agent_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -397,14 +800,14 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
-        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\"}, network_connection_type)",
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\"}, network_connection_type)",
         "includeAll": true,
         "label": "Connection type",
         "multi": true,
         "name": "connection_type",
         "options": [],
         "query": {
-          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\"}, network_connection_type)",
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\"}, network_connection_type)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -422,14 +825,264 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
-        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_ssid)",
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_connection_subtype)",
+        "includeAll": true,
+        "label": "Connection subtype",
+        "multi": true,
+        "name": "connection_subtype",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_connection_subtype)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_interface_name)",
+        "includeAll": true,
+        "label": "Interface",
+        "multi": true,
+        "name": "interface_name",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_interface_name)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_carrier_name)",
+        "includeAll": true,
+        "label": "Carrier",
+        "multi": true,
+        "name": "carrier",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_carrier_name)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_ssid)",
         "includeAll": true,
         "label": "SSID",
         "multi": true,
         "name": "ssid",
         "options": [],
         "query": {
-          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_ssid)",
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_ssid)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_bssid)",
+        "includeAll": true,
+        "label": "BSSID",
+        "multi": true,
+        "name": "bssid",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_bssid)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_channel)",
+        "includeAll": true,
+        "label": "Wi-Fi channel",
+        "multi": true,
+        "name": "wifi_channel",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_channel)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_phy_mode)",
+        "includeAll": true,
+        "label": "Wi-Fi PHY mode",
+        "multi": true,
+        "name": "phy_mode",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_phy_mode)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_access_point_vendor)",
+        "includeAll": true,
+        "label": "Access point vendor",
+        "multi": true,
+        "name": "ap_vendor",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_wifi_access_point_vendor)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_cellular_generation)",
+        "includeAll": true,
+        "label": "Cellular generation",
+        "multi": true,
+        "name": "cellular_generation",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_cellular_generation)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_interface_driver_model)",
+        "includeAll": true,
+        "label": "Driver model",
+        "multi": true,
+        "name": "driver_model",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_interface_driver_model)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_interface_driver_version)",
+        "includeAll": true,
+        "label": "Driver version",
+        "multi": true,
+        "name": "driver_version",
+        "options": [],
+        "query": {
+          "query": "label_values({__name__=~\"network_(signal|connection|wifi)_.*\",thousandeyes_data_version=\"v2\",thousandeyes_source_agent_geo_country_iso_code=~\"$country\",thousandeyes_source_agent_location=~\"$location\",thousandeyes_source_agent_name=~\"$agent\",network_connection_type=~\"$connection_type\"}, network_interface_driver_version)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -447,5 +1100,5 @@
   "timezone": "browser",
   "title": "Endpoint Local Network - Connection",
   "uid": "te-endpoint-connection",
-  "version": 1
+  "version": 2
 }
