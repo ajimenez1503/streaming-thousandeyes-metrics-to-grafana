@@ -103,22 +103,6 @@ The exact ThousandEyes destination is the generated URL plus the full Prometheus
 https://random-words.trycloudflare.com/api/v1/otlp/v1/metrics
 ```
 
-Confirm that the public endpoint is reachable and protected. Load the token without printing it:
-
-```bash
-OTLP_TOKEN_VALUE=$(sed -n 's/^OTLP_TOKEN=//p' .env)
-TUNNEL_URL=https://random-words.trycloudflare.com
-
-curl --silent --show-error --output /dev/null --write-out '%{http_code}\n' \
-  --request POST \
-  --header 'Content-Type: application/x-protobuf' \
-  --header "X-OTLP-Token: ${OTLP_TOKEN_VALUE}" \
-  --data-binary '' \
-  "${TUNNEL_URL}/api/v1/otlp/v1/metrics"
-```
-
-An empty, valid protobuf request should return `200`. Repeating the request without `X-OTLP-Token` should return `401`. A request to any other path should return `404`.
-
 ## 4. Create the ThousandEyes stream in the UI
 
 1. In ThousandEyes, go to **Manage > Integrations > Integration 1.0**.
@@ -218,6 +202,24 @@ otlp:
 Promoting everything is useful for this lab, but attributes such as agent, SSID, BSSID, network, location, and custom ThousandEyes tags can create many time series. For a larger or long-lived environment, monitor cardinality and replace this option with an explicit `promote_resource_attributes` allowlist.
 
 ## Troubleshooting
+
+### Verify the public OTLP endpoint
+
+If the stream cannot connect, confirm that the public endpoint is reachable and protected. Load the token without printing it:
+
+```bash
+OTLP_TOKEN_VALUE=$(sed -n 's/^OTLP_TOKEN=//p' .env)
+TUNNEL_URL=https://random-words.trycloudflare.com
+
+curl --silent --show-error --output /dev/null --write-out '%{http_code}\n' \
+  --request POST \
+  --header 'Content-Type: application/x-protobuf' \
+  --header "X-OTLP-Token: ${OTLP_TOKEN_VALUE}" \
+  --data-binary '' \
+  "${TUNNEL_URL}/api/v1/otlp/v1/metrics"
+```
+
+An empty, valid protobuf request should return `200`. Repeating the request without `X-OTLP-Token` should return `401`. A request to any other path should return `404`.
 
 ### The stream is `pending`
 
