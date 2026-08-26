@@ -57,14 +57,13 @@ Create the local environment file:
 cp .env.example .env
 ```
 
-Generate two values and put them in `.env`:
+Generate a value and put it in `.env` as `OTLP_TOKEN`:
 
 ```bash
 openssl rand -hex 32
-openssl rand -hex 24
 ```
 
-Use the first value for `OTLP_TOKEN` and the second for `GRAFANA_ADMIN_PASSWORD`. Do not commit `.env`. The provided `.gitignore` excludes it.
+Do not commit `.env`. The provided `.gitignore` excludes it.
 
 `OTLP_TOKEN` becomes the value of a custom `X-OTLP-Token` request header. NGINX rejects requests without the matching header and rejects every path except Prometheus's OTLP metrics endpoint.
 
@@ -80,7 +79,7 @@ Local services are available at:
 - Prometheus: <http://localhost:9090>
 - Grafana: <http://localhost:3000>
 
-Sign in to Grafana with `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD` from `.env`. The `ThousandEyes / Endpoint Local Network / Connection` dashboard is provisioned automatically.
+Sign in to Grafana with the default username `admin` and password `admin`. Grafana asks you to change the password after the first sign-in. The `ThousandEyes / Endpoint Local Network / Connection` dashboard is provisioned automatically.
 
 Prometheus starts with `--web.enable-otlp-receiver`, which enables OTLP/HTTP metrics ingestion at `/api/v1/otlp/v1/metrics`. Its configuration also allows samples up to 30 minutes out of order, which is useful when batches arrive late.
 
