@@ -96,7 +96,7 @@ https://random-words.trycloudflare.com/api/v1/otlp/v1/metrics
 7. Set **OpenTelemetry Signal** to **Metric**.
 8. Set **Data Model Version** to **v2**. Dynamic and Local Network Endpoint metrics require v2.
 9. In the Endpoint Experience selection, choose one or more Endpoint Agent labels. These labels determine which agents contribute Local Network data.
-10. Save the integration, then use **Test** if that option is available.
+10. Save the integration.
 
 The integration sends all supported Endpoint Local Network categories for the selected agents. Prometheus and the supplied dashboard focus on the `Connection` metric names.
 
