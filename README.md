@@ -5,7 +5,7 @@ This repository is a local, Docker-based lab for streaming ThousandEyes OpenTele
 ```mermaid
 flowchart LR
     TE[ThousandEyes] -->|OTLP/HTTP over HTTPS| CF[Cloudflare Quick Tunnel]
-    CF -->|X-OTLP-Token| GW[Path-restricted ingress]
+    CF -->|HTTP POST| GW[Path-restricted ingress]
     GW -->|POST /api/v1/otlp/v1/metrics| P[Prometheus]
     G[Grafana] -->|PromQL| P
 ```
@@ -14,12 +14,12 @@ The stack includes:
 
 - Prometheus with its native OTLP/HTTP receiver enabled
 - Promotion of every OpenTelemetry resource attribute to a Prometheus label
-- A small NGINX ingress that exposes only the OTLP metrics path and requires a private header
+- A small NGINX ingress that exposes only the OTLP metrics path
 - A Cloudflare Quick Tunnel that gives the local OTLP receiver a public HTTPS URL
 - Grafana with a preconfigured Prometheus data source and an Endpoint Connection dashboard
 
 > [!WARNING]
-> Cloudflare Quick Tunnels are intended for testing and development. Their public URL changes when the tunnel is recreated and they have no uptime guarantee. Use an authenticated, named Cloudflare Tunnel or another production ingress for a durable integration.
+> Cloudflare Quick Tunnels are intended for testing and development. Their public URL changes when the tunnel is recreated and they have no uptime guarantee. This demo intentionally leaves the OTLP metrics endpoint unauthenticated, so anyone with the URL can send metrics while it is running. Stop the stack after the demo. Use an authenticated, named Cloudflare Tunnel or another production ingress for a durable integration.
 
 ## Endpoint Connection data
 
@@ -49,25 +49,7 @@ The `Connection` metrics also carry connection details such as interface, SSID, 
 - Permission to manage Integrations 1.0, or a ThousandEyes API bearer token with access to the target account group
 - At least one Endpoint Agent label that selects the agents whose local-network data should be streamed
 
-## 1. Configure local credentials
-
-Create the local environment file:
-
-```bash
-cp .env.example .env
-```
-
-Generate a value and put it in `.env` as `OTLP_TOKEN`:
-
-```bash
-openssl rand -hex 32
-```
-
-Do not commit `.env`. The provided `.gitignore` excludes it.
-
-`OTLP_TOKEN` becomes the value of a custom `X-OTLP-Token` request header. NGINX rejects requests without the matching header and rejects every path except Prometheus's OTLP metrics endpoint.
-
-## 2. Start Prometheus, Grafana, and cloudflared
+## 1. Start Prometheus, Grafana, and cloudflared
 
 ```bash
 docker compose up -d
@@ -83,7 +65,7 @@ Sign in to Grafana with the default username `admin` and password `admin`. Grafa
 
 Prometheus starts with `--web.enable-otlp-receiver`, which enables OTLP/HTTP metrics ingestion at `/api/v1/otlp/v1/metrics`. Its configuration also allows samples up to 30 minutes out of order, which is useful when batches arrive late.
 
-## 3. Get the public OTLP URL
+## 2. Get the public OTLP URL
 
 Wait for `cloudflared` to print its generated URL:
 
@@ -103,14 +85,14 @@ The exact ThousandEyes destination is the generated URL plus the full Prometheus
 https://random-words.trycloudflare.com/api/v1/otlp/v1/metrics
 ```
 
-## 4. Create the ThousandEyes stream in the UI
+## 3. Create the ThousandEyes stream in the UI
 
 1. In ThousandEyes, go to **Manage > Integrations > Integration 1.0**.
 2. Select **New Integration > OpenTelemetry Integration**.
 3. Enter a name, for example `Local Prometheus - Endpoint Connection`.
 4. Set **Target** to **HTTP**.
 5. Set **Endpoint URL** to the full public URL from the previous section, including `/api/v1/otlp/v1/metrics`.
-6. Choose custom authentication and add `X-OTLP-Token` with the value from `.env`.
+6. Leave authentication disabled for this demo.
 7. Set **OpenTelemetry Signal** to **Metric**.
 8. Set **Data Model Version** to **v2**. Dynamic and Local Network Endpoint metrics require v2.
 9. In the Endpoint Experience selection, choose one or more Endpoint Agent labels. These labels determine which agents contribute Local Network data.
@@ -118,15 +100,14 @@ https://random-words.trycloudflare.com/api/v1/otlp/v1/metrics
 
 The integration sends all supported Endpoint Local Network categories for the selected agents. Prometheus and the supplied dashboard focus on the `Connection` metric names.
 
-## 5. API alternative
+## 4. API alternative
 
-Set local shell variables. The tunnel value must not end with `/`, and `OTLP_TOKEN_VALUE` must match `.env`:
+Set local shell variables. The tunnel value must not end with `/`:
 
 ```bash
 export TE_BEARER_TOKEN='replace-with-your-ThousandEyes-token'
 export TE_ACCOUNT_GROUP_ID='replace-with-your-account-group-id'
 export TUNNEL_URL='https://random-words.trycloudflare.com'
-export OTLP_TOKEN_VALUE=$(sed -n 's/^OTLP_TOKEN=//p' .env)
 ```
 
 List Endpoint Agent labels and choose the ID that covers the desired agents:
@@ -145,7 +126,6 @@ export ENDPOINT_AGENT_LABEL_ID='replace-with-label-id'
 
 jq --null-input \
   --arg endpoint "${TUNNEL_URL}/api/v1/otlp/v1/metrics" \
-  --arg token "${OTLP_TOKEN_VALUE}" \
   --arg label_id "${ENDPOINT_AGENT_LABEL_ID}" \
   '{
     name: "Local Prometheus - Endpoint Connection",
@@ -153,7 +133,6 @@ jq --null-input \
     signal: "metric",
     endpointType: "http",
     streamEndpointUrl: $endpoint,
-    customHeaders: {"X-OTLP-Token": $token},
     dataModelVersion: "v2",
     endpointAgentLabel: [{id: $label_id}],
     enabled: true
@@ -178,7 +157,7 @@ curl --silent --show-error \
   | jq '.[] | {id, name, enabled, streamStatus}'
 ```
 
-## 6. Verify data in Prometheus and Grafana
+## 5. Verify data in Prometheus and Grafana
 
 In the Prometheus expression browser, start with:
 
@@ -205,21 +184,19 @@ Promoting everything is useful for this lab, but attributes such as agent, SSID,
 
 ### Verify the public OTLP endpoint
 
-If the stream cannot connect, confirm that the public endpoint is reachable and protected. Load the token without printing it:
+If the stream cannot connect, confirm that the public endpoint is reachable:
 
 ```bash
-OTLP_TOKEN_VALUE=$(sed -n 's/^OTLP_TOKEN=//p' .env)
 TUNNEL_URL=https://random-words.trycloudflare.com
 
 curl --silent --show-error --output /dev/null --write-out '%{http_code}\n' \
   --request POST \
   --header 'Content-Type: application/x-protobuf' \
-  --header "X-OTLP-Token: ${OTLP_TOKEN_VALUE}" \
   --data-binary '' \
   "${TUNNEL_URL}/api/v1/otlp/v1/metrics"
 ```
 
-An empty, valid protobuf request should return `200`. Repeating the request without `X-OTLP-Token` should return `401`. A request to any other path should return `404`.
+An empty, valid protobuf request should return `200`. A request to any other path should return `404` because NGINX publishes only the OTLP metrics endpoint.
 
 ### The stream is `pending`
 
@@ -229,7 +206,6 @@ An empty, valid protobuf request should return `200`. Repeating the request with
 
 ### The stream is `failing`
 
-- `401` means the `X-OTLP-Token` in ThousandEyes does not match `.env`.
 - `404` usually means `/api/v1/otlp/v1/metrics` is missing from the Endpoint URL.
 - Recheck `docker compose logs cloudflared`. A recreated Quick Tunnel has a new public URL, so the ThousandEyes integration must be updated.
 - Run `docker compose logs otlp-ingress prometheus` to distinguish ingress rejection from Prometheus ingestion errors.
