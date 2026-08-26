@@ -180,7 +180,7 @@ otlp:
   promote_all_resource_attributes: true
 ```
 
-Promoting everything is useful for this lab, but attributes such as agent, SSID, BSSID, network, location, and custom ThousandEyes tags can create many time series. For a larger or long-lived environment, monitor cardinality and replace this option with an explicit `promote_resource_attributes` allowlist.
+This demo promotes every resource attribute. You can instead promote only the resource attributes you are interested in by replacing `promote_all_resource_attributes: true` with an explicit `promote_resource_attributes` list.
 
 ## Troubleshooting
 
