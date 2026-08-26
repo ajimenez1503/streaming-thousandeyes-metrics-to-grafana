@@ -42,14 +42,14 @@ The dashboard focuses on the ThousandEyes [Endpoint Experience Local Network `Co
 
 The `Connection` metrics also carry connection details such as interface, SSID, BSSID, Wi-Fi channel, PHY mode, access-point vendor, cellular generation, carrier, and driver information. The common resource attributes identify the stream, account, Endpoint Agent, location, public and local network, connection type, ASN, data-model version, and permalink.
 
-## Prerequisites
+## 1. Prerequisites
 
 - Docker Engine or Docker Desktop with Docker Compose
 - A ThousandEyes account with Endpoint Agents producing Local Network data
 - Permission to manage Integrations 1.0, or a ThousandEyes API bearer token with access to the target account group
 - At least one Endpoint Agent label that selects the agents whose local-network data should be streamed
 
-## 1. Start Prometheus, Grafana, and cloudflared
+## 2. Start Prometheus, Grafana, and cloudflared
 
 ```bash
 docker compose up -d
@@ -65,7 +65,7 @@ Sign in to Grafana with the default username `admin` and password `admin`. Grafa
 
 Prometheus starts with `--web.enable-otlp-receiver`, which enables OTLP/HTTP metrics ingestion at `/api/v1/otlp/v1/metrics`. Its configuration also allows samples up to 30 minutes out of order, which is useful when batches arrive late.
 
-## 2. Get the public OTLP URL
+## 3. Get the public OTLP URL
 
 Wait for `cloudflared` to print its generated URL:
 
@@ -85,7 +85,9 @@ The exact ThousandEyes destination is the generated URL plus the full Prometheus
 https://random-words.trycloudflare.com/api/v1/otlp/v1/metrics
 ```
 
-## 3. Create the ThousandEyes stream in the UI
+## 4. Create the ThousandEyes stream
+
+### 4.A In the UI
 
 1. In ThousandEyes, go to **Manage > Integrations > Integration 1.0**.
 2. Select **New Integration > OpenTelemetry Integration**.
@@ -100,7 +102,7 @@ https://random-words.trycloudflare.com/api/v1/otlp/v1/metrics
 
 The integration sends all supported Endpoint Local Network categories for the selected agents. Prometheus and the supplied dashboard focus on the `Connection` metric names.
 
-## 4. API alternative
+### 4.B In the API
 
 Set local shell variables. The tunnel value must not end with `/`:
 
